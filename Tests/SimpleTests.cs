@@ -25,6 +25,15 @@ namespace Tests
             }
         }
 
+        private static IEnumerable<int> InfiniteList()
+        {
+            int val = 0;
+            while (true) {
+                yield return val;
+                val++;
+            }
+        }
+
         [Test]
         public void EmptyTest()
         {
@@ -54,6 +63,24 @@ namespace Tests
             var t2 = lazy.Select((index, val) => index == val).All(b => b);
             Assert.True(t1);
             Assert.True(t2);
+        }
+
+        [Test]
+        public void InfiniteListTest()
+        {
+            var lazy = new LazyReadOnlyList<int>(InfiniteList());
+            var prefix = lazy.Take(5);
+            Assert.That(prefix, Is.EqualTo(Enumerable.Range(0, 5)));
+        }
+
+        [Test]
+        public void InfiniteListMultipleIterationsTest()
+        {
+            var lazy = InfiniteList().ToLazyReadOnlyList();
+            var prefix = lazy.Take(5);
+            Assert.That(prefix, Is.EqualTo(Enumerable.Range(0, 5)));
+            prefix = lazy.Take(5);
+            Assert.That(prefix, Is.EqualTo(Enumerable.Range(0, 5)));
         }
     }
 }
