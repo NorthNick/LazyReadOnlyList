@@ -45,8 +45,8 @@ namespace LazyReadOnlyList
                             MoveNext();
                         }
                     }
+                    if (index >= _enumeratedCount) throw new Exception($"Index {index} is out of range");
                 }
-                if (index >= _enumeratedCount) throw new Exception($"Index {index} is out of range");
                 return _enumeratedElements[index];
             }
         }
