@@ -39,8 +39,12 @@ namespace LazyReadOnlyList
         {
             get {
                 if (index < 0) throw new ArgumentException("Argument cannot be negative", nameof(index));
-                while (index >= _enumeratedCount && _elementsRemain) {
-                    MoveNext();
+                if (index >= _enumeratedCount) {
+                    lock (_lock) {
+                        while (index >= _enumeratedCount && _elementsRemain) {
+                            MoveNext();
+                        }
+                    }
                 }
                 if (index >= _enumeratedCount) throw new Exception($"Index {index} is out of range");
                 return _enumeratedElements[index];
